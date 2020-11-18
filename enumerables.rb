@@ -39,6 +39,17 @@ module Enumerable
         return true
     end
 
+    def my_count(arg = nil)
+            @arr.length
+            count = 0
+            my_each do |n|
+                if arg == n
+                count += 1
+                end
+            end
+            return count   
+    end
+
 end
 
 class Arr
@@ -74,3 +85,7 @@ d = a.my_none? do |n|
 end
 
 puts "#{d}"
+
+puts "#{a.my_count}"
+
+puts "#{a.my_count(3)}"

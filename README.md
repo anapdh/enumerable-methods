@@ -6,7 +6,7 @@
 
 ### About the Project
 
-This project consists of a implemention of a own version of Ruby’s enumerable methods.
+This project consists of an implementation of an own version of Ruby’s enumerable methods.
 
 
 ## Built With
@@ -21,7 +21,7 @@ This project consists of a implemention of a own version of Ruby’s enumerable 
 To run this project, you need a computer with Ruby installed.
 
 ### Running the project
-Clone the repository in your local machine and execute the file folder in terminal using ruby.
+Clone the repository in your local machine and execute the file folder on the terminal using ruby.
 
 ### Running the file
 Execute the file using ruby enumerables.rb on the terminal.

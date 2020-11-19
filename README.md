@@ -6,7 +6,16 @@
 
 ### About the Project
 
-This project consists of an implementation of an own version of Ruby’s enumerable methods.
+This project consists of an implementation of an own version of following Ruby’s enumerable methods:
+
+- Each;
+- Each with index;
+- Select;
+- All;
+- None;
+- Count;
+- Map;
+- Inject.
 
 
 ## Built With

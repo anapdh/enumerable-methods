@@ -1,13 +1,13 @@
 module Enumerable
     def my_each
-        for i in 0...@arr.length do
-            yield(@arr[i])
+        for i in 0...self.length do
+            yield(self[i])
         end
     end
     
     def my_each_with_index
-        for i in 0...@arr.length do
-            yield(@arr[i], i)
+        for i in 0...self.length do
+            yield(self[i], i)
         end
     end
 
@@ -42,7 +42,7 @@ module Enumerable
     def my_count(arg = nil)
             count = 0
             if arg == nil && block_given? == false
-            return @arr.length    
+            return self.length    
             elsif block_given?
                 my_each do |n|
                     if yield(n)
@@ -60,10 +60,11 @@ module Enumerable
         end  
     end
 
-    def my_map
+    def my_map(&block)
         newarr = []
         my_each_with_index do | n, i |
-            newarr[i] = yield(n)
+            # newarr[i] = yield(n)
+            newarr[i] = block.call(n)
         end
         return newarr
     end
@@ -79,24 +80,21 @@ module Enumerable
         end
         return acc
     end
-    end
+end
 
-class Arr
+class Array
     include Enumerable
-    def initialize(arr)
-        @arr = arr
-    end
 end
 
 def multiply_els(arg)
-    a = Arr.new(arg)
-    g = a.my_inject do | acc, n |
+    g = arg.my_inject do | acc, n |
         acc * n
     end
     return g
 end
 
-a = Arr.new([1, 2, 3])
+a = [1, 2, 3]
+
 a.my_each do |n|
     puts "current element #{n}"
 end
@@ -133,11 +131,11 @@ end
 
 puts e
 
-f = a.my_map do | n |
-    n + n
-end
+# f = a.my_map do | n |
+#     n + n
+# end
 
-puts "#{f}"
+# puts "#{f}"
 
 g = a.my_inject do | acc, n |
     acc * n
@@ -146,3 +144,9 @@ end
 puts "#{g}"
 
 puts multiply_els([2, 4, 5])
+
+proc = Proc.new { |x| x * 2 }
+
+h = a.my_map(&proc)
+
+puts "#{h}"

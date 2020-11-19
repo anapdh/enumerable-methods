@@ -1,8 +1,6 @@
 module Enumerable
     def my_each
-        if !block_given?
-            return self
-        end
+        return to_enum(:my_each) unless block_given?
         is_range = self.kind_of?(Range) 
         range = is_range ? self : 0...self.length
         for i in range do
@@ -11,6 +9,7 @@ module Enumerable
     end
     
     def my_each_with_index
+        return to_enum(:my_each_with_index) unless block_given?
         is_range = self.kind_of?(Range) 
         range = is_range ? self : 0...self.length
         for i in range do
@@ -19,6 +18,7 @@ module Enumerable
     end
 
     def my_select
+        return to_enum(:my_select) unless block_given?
         a = []
         my_each do |n|
             if yield(n)
@@ -104,6 +104,7 @@ module Enumerable
     end
 
     def my_map(&block)
+        return to_enum(:my_map) unless block_given?
         newarr = []
         my_each_with_index do | n, i |
             if block == true
@@ -116,6 +117,7 @@ module Enumerable
     end
 
     def my_inject(acc = nil)
+        raise LocalJumpError if !block_given? && acc == nil
         is_range = self.kind_of?(Range)
         my_each_with_index do | n, i |
             if (is_range ? true : i == 0) && acc == nil

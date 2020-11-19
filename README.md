@@ -2,14 +2,11 @@
 ![](https://img.shields.io/badge/Microverse-blueviolet)
 
 
-## Building Blocks - Bubble Sort
+## Basic Enumerable Methods
 
-Bubble sort algorithm using Ruby.
+### About the Project
 
-
-## About the Project
-
-This project implements the bubble sort and bubble sort by method algorithms.
+This project consists of a implemention of a own version of Ruby’s enumerable methods.
 
 
 ## Built With
@@ -27,10 +24,16 @@ To run this project, you need a computer with Ruby installed.
 Clone the repository in your local machine and execute the file folder in terminal using ruby.
 
 ### Running the file
-Execute the file using ruby sort.rb in the terminal.
+Execute the file using ruby enumerables.rb on the terminal.
 
 
 ## Author
+
+👩🏼‍💻 **Ana Paula Hübner**
+
+- GitHub: [@anapdh](https://github.com/anapdh)
+- Twitter: [@anapdh](https://twitter.com/anapdh)
+- LinkedIn: [LinkedIn](https://www.linkedin.com/in/ana-paula-hübner-7a9484181)
 
 👨‍💻 **Elbert Corniell**
 
@@ -39,18 +42,11 @@ Execute the file using ruby sort.rb in the terminal.
 - LinkedIn: [LinkedIn](https://www.linkedin.com/in/elbert-corniell-989183159/)
 
 
-👩🏼‍💻 **Ana Paula Hübner**
-
-- GitHub: [@anapdh](https://github.com/anapdh)
-- Twitter: [@anapdh](https://twitter.com/anapdh)
-- LinkedIn: [LinkedIn](https://www.linkedin.com/in/ana-paula-hübner-7a9484181)
-
-
 ## 🤝 Contributing
 
 Contributions, issues, and feature requests are welcome!
 
-Feel free to check the [issues page](https://github.com/elberthcorniell/bubble-sort-ruby/issues).
+Feel free to check the [issues page](https://github.com/anapdh/enumerable-methods/issues).
 
 
 ## Show your support

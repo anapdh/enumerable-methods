@@ -18,7 +18,7 @@ module Enumerable
                 a.push(n)
             end
         end
-        return a
+        a
     end
 
     def my_all?
@@ -27,7 +27,7 @@ module Enumerable
                 return false
             end
         end
-        return true
+        true
     end
 
     def my_none?
@@ -36,7 +36,7 @@ module Enumerable
                 return false
             end
         end
-        return true
+        true
     end
 
     def my_count(arg = nil)
@@ -63,8 +63,11 @@ module Enumerable
     def my_map(&block)
         newarr = []
         my_each_with_index do | n, i |
-            # newarr[i] = yield(n)
+            if block == true
             newarr[i] = block.call(n)
+            else
+            newarr[i] = yield(n)
+            end
         end
         return newarr
     end
@@ -131,11 +134,11 @@ end
 
 puts e
 
-# f = a.my_map do | n |
-#     n + n
-# end
+f = a.my_map do | n |
+     n * n
+ end
 
-# puts "#{f}"
+ puts "#{f}"
 
 g = a.my_inject do | acc, n |
     acc * n

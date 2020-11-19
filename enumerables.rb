@@ -1,13 +1,20 @@
 module Enumerable
     def my_each
-        for i in 0...self.length do
-            yield(self[i])
+        if !block_given?
+            return self
+        end
+        is_range = self.kind_of?(Range) 
+        range = is_range ? self : 0...self.length
+        for i in range do
+            yield(is_range ? i : self[i])
         end
     end
     
     def my_each_with_index
-        for i in 0...self.length do
-            yield(self[i], i)
+        is_range = self.kind_of?(Range) 
+        range = is_range ? self : 0...self.length
+        for i in range do
+            yield(is_range ? i : self[i], i)
         end
     end
 
@@ -21,18 +28,54 @@ module Enumerable
         a
     end
 
-    def my_all?
+    def my_all?(pattern = nil)
         my_each do |n|
-            if !yield(n)
+            if pattern != nil
+                if pattern.kind_of?(Class) && !n.kind_of?(pattern)
+                    return false
+                end
+                if !pattern.kind_of?(Class) && !n.to_s.match(pattern.to_s)
+                    return false
+                end
+            end
+            if block_given? && !yield(n)
                 return false
             end
         end
         true
     end
 
-    def my_none?
+    def my_any?(pattern = nil)
         my_each do |n|
-            if yield(n)
+            if pattern != nil
+                if pattern.kind_of?(Class) && n.kind_of?(pattern)
+                    return true
+                end
+                if !pattern.kind_of?(Class) && n.to_s.match(pattern.to_s)
+                    return true
+                end
+            end
+            if block_given? && yield(n)
+                return true
+            end
+        end
+        if (!block_given? && pattern == nil && !self.empty?)
+            return true
+        end
+        false
+    end
+
+    def my_none?(pattern = nil)
+        my_each do |n|
+            if pattern != nil
+                if pattern.kind_of?(Class) && n.kind_of?(pattern)
+                    return false
+                end
+                if !pattern.kind_of?(Class) && n.to_s.match(pattern.to_s)
+                    return false
+                end
+            end
+            if block_given? && yield(n)
                 return false
             end
         end
@@ -72,84 +115,81 @@ module Enumerable
         return newarr
     end
 
-    def my_inject
-        acc = nil
+    def my_inject(acc = nil)
+        is_range = self.kind_of?(Range)
         my_each_with_index do | n, i |
-            if i == 0
-            acc = n
+            if (is_range ? true : i == 0) && acc == nil
+              acc = n
             else
-            acc = yield(acc, n)
-        end
+              acc = yield(acc, n)
+            end
         end
         return acc
     end
 end
 
-class Array
-    include Enumerable
-end
-
 def multiply_els(arg)
-    g = arg.my_inject do | acc, n |
-        acc * n
-    end
-    return g
+        arg.my_inject do | acc, n |
+            acc * n
+        end
 end
 
-a = [1, 2, 3]
+puts '1.--------my_each--------'
+%w[Sharon Leo Leila Brian Arun].my_each { |friend| puts friend }
 
-a.my_each do |n|
-    puts "current element #{n}"
+puts '2.--------my_each_with_index--------'
+%w[Sharon Leo Leila Brian Arun].my_each_with_index { |friend, index| puts friend if index.even? }
+
+puts '3.--------my_select--------'
+puts (%w[Sharon Leo Leila Brian Arun].my_select { |friend| friend != 'Brian' })
+
+puts '4.--------my_all--------'
+puts (%w[ant bear cat].my_all? { |word| word.length >= 3 }) #=> true
+puts (%w[ant bear cat].my_all? { |word| word.length >= 4 }) #=> false
+puts %w[ant bear cat].my_all?(/t/) #=> false
+puts [1, 2i, 3.14].my_all?(Numeric) #=> true
+puts [].my_all? #=> true
+
+puts '5.--------my_any--------'
+puts (%w[ant bear cat].my_any? { |word| word.length >= 3 }) #=> true
+puts (%w[ant bear cat].my_any? { |word| word.length >= 4 }) #=> true
+puts %w[ant bear cat].my_any?(/d/) #=> false
+puts [nil, true, 99].my_any?(Integer) #=> true
+puts [nil, true, 99].my_any? #=> true
+puts [].my_any? #=> false
+
+puts '6.--------my_none--------'
+puts (%w[ant bear cat].my_none? { |word| word.length == 5 }) #=> true
+puts (%w[ant bear cat].my_none? { |word| word.length >= 4 }) #=> false
+puts %w[ant bear cat].my_none?(/d/) #=> true
+puts [1, 3.14, 42].my_none?(Float) #=> false
+puts [].my_none? #=> true
+puts [nil].my_none? #=> true
+puts [nil, false].my_none? #=> true
+puts [nil, false, true].my_none? #=> false
+
+puts '7.--------my_count--------'
+arr = [1, 2, 4, 2]
+puts arr.my_count #=> 4
+puts arr.my_count(2) #=> 2
+puts (arr.my_count { |x| (x % 2).zero? }) #=> 3
+
+puts '8.--------my_maps--------'
+my_order = ['medium Big Mac', 'medium fries', 'medium milkshake']
+puts (my_order.my_map { |item| item.gsub('medium', 'extra large') })
+puts ((0..5).my_map { |i| i * i })
+puts 'my_map_proc'
+my_proc = Proc.new { |i| i * i }
+puts (1..5).my_map(&my_proc)
+
+puts '8.--------my_inject--------'
+puts ((1..5).my_inject { |sum, n| sum + n }) #=> 15
+puts (1..5).my_inject(1) { |product, n| product * n } #=> 120
+longest = %w[ant bear cat].my_inject do |memo, word|
+  memo.length > word.length ? memo : word
 end
+puts longest #=> "bear"
 
-a.my_each_with_index do |n, i|
-    puts "Element at #{i} is #{n}"
-end
+puts 'multiply_els'
+puts multiply_els([2, 4, 5]) #=> 40
 
-b = a.my_select do |num|
-    num.odd?
-end
-
-puts "#{b}"
-
-c = a.my_all? do |n|
-    n < 4
-end
-
-puts "#{c}"
-
-d = a.my_none? do |n|
-    n < 4
-end
-
-puts "#{d}"
-
-puts "#{a.my_count}"
-
-puts "#{a.my_count(3)}"
-
-e = a.my_count do |n|
-    false
-end
-
-puts e
-
-f = a.my_map do | n |
-     n * n
- end
-
- puts "#{f}"
-
-g = a.my_inject do | acc, n |
-    acc * n
-end
-
-puts "#{g}"
-
-puts multiply_els([2, 4, 5])
-
-proc = Proc.new { |x| x * 2 }
-
-h = a.my_map(&proc)
-
-puts "#{h}"

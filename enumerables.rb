@@ -118,27 +118,37 @@ module Enumerable
         end  
     end
 
-    def my_map(&block)
-        return to_enum(:my_map) unless block_given?
+    def my_map(block = nil)
+        return to_enum(:my_map) unless block_given? || block != nil
         newarr = []
-        my_each_with_index do | n, i |
+        my_each do | n |
             if block != nil
-            newarr[i] = block.call(n)
+                newarr << block.call(n)
             else
-            newarr[i] = yield(n)
+                newarr << yield(n)
             end
         end
         return newarr
     end
 
-    def my_inject(acc = nil)
-        raise LocalJumpError if !block_given? && acc == nil
+    def my_inject(acc = nil, operator = nil)
+        if acc.is_a?(Symbol)
+            operator = acc
+            acc = nil
+        end
+        is_symbol = operator.is_a?(Symbol)
+        raise LocalJumpError if !block_given? && !is_symbol
         is_range = self.kind_of?(Range)
         my_each_with_index do | n, i |
             if (is_range ? true : i == 0) && acc == nil
-              acc = n
+                acc = n
             else
-              acc = yield(acc, n)
+                if operator != nil && is_symbol
+                    operator = operator.to_proc
+                    acc = operator.call(acc, n)
+                else
+                    acc = yield(acc, n)
+                end
             end
         end
         return acc
@@ -150,10 +160,3 @@ def multiply_els(arg)
             acc * n
         end
 end
-
-puts [nil].my_any?
-puts [].my_any?
-
-
-
-

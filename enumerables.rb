@@ -1,25 +1,23 @@
 module Enumerable
     def my_each
         return to_enum(:my_each) unless block_given?
-        is_range = self.kind_of?(Range) 
+        is_range = !self.kind_of?(Array) 
         range = is_range ? self : 0...self.length
         for i in range do
             yield(is_range ? i : self[i])
         end
-        return self unless !self.kind_of?(Array)
-        return self unless !self.kind_of?(Hash)
+        self
     end
     
     def my_each_with_index
         return to_enum(:my_each_with_index) unless block_given?
-        is_range = self.kind_of?(Range) 
+        is_range = !self.kind_of?(Array) 
         range = is_range ? self : 0...self.length
         for i in range do
             ind = (is_range ? i : self[i])
             yield(ind, i)
         end
-        return self unless !self.kind_of?(Array)
-        return self unless !self.kind_of?(Hash)
+        self
     end
 
     def my_select
@@ -67,11 +65,11 @@ module Enumerable
                 return true
             end
         end
-        if (!block_given? && pattern == nil && !self.empty?)
+        if (!block_given? && pattern == nil && self.empty?)
             return true
         end
         if !block_given? && pattern == nil
-            return my_any? {|n| n }
+            return my_any? {|n| n}
         end
         false
     end
@@ -152,3 +150,10 @@ def multiply_els(arg)
             acc * n
         end
 end
+
+puts [nil].my_any?
+puts [].my_any?
+
+
+
+

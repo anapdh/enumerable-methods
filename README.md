@@ -12,6 +12,7 @@ This project consists of an implementation of an own version of following Rubyâ€
 - Each with index;
 - Select;
 - All;
+- Any;
 - None;
 - Count;
 - Map;

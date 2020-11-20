@@ -6,6 +6,8 @@ module Enumerable
         for i in range do
             yield(is_range ? i : self[i])
         end
+        return self unless !self.kind_of?(Array)
+        return self unless !self.kind_of?(Hash)
     end
     
     def my_each_with_index
@@ -13,8 +15,11 @@ module Enumerable
         is_range = self.kind_of?(Range) 
         range = is_range ? self : 0...self.length
         for i in range do
-            yield(is_range ? i : self[i], i)
+            ind = (is_range ? i : self[i])
+            yield(ind, i)
         end
+        return self unless !self.kind_of?(Array)
+        return self unless !self.kind_of?(Hash)
     end
 
     def my_select
@@ -42,6 +47,9 @@ module Enumerable
                 return false
             end
         end
+        if !block_given? && pattern == nil
+            return my_all? {|n| n }
+        end
         true
     end
 
@@ -62,6 +70,9 @@ module Enumerable
         if (!block_given? && pattern == nil && !self.empty?)
             return true
         end
+        if !block_given? && pattern == nil
+            return my_any? {|n| n }
+        end
         false
     end
 
@@ -79,13 +90,19 @@ module Enumerable
                 return false
             end
         end
+        if !block_given? && pattern == nil
+            return my_none? {|n| n }
+        end
         true
     end
 
     def my_count(arg = nil)
             count = 0
             if arg == nil && block_given? == false
-            return self.length    
+                my_each do |n|
+                    count += 1
+                    end
+            return count
             elsif block_given?
                 my_each do |n|
                     if yield(n)
@@ -107,7 +124,7 @@ module Enumerable
         return to_enum(:my_map) unless block_given?
         newarr = []
         my_each_with_index do | n, i |
-            if block == true
+            if block != nil
             newarr[i] = block.call(n)
             else
             newarr[i] = yield(n)
@@ -135,63 +152,3 @@ def multiply_els(arg)
             acc * n
         end
 end
-
-puts '1.--------my_each--------'
-%w[Sharon Leo Leila Brian Arun].my_each { |friend| puts friend }
-
-puts '2.--------my_each_with_index--------'
-%w[Sharon Leo Leila Brian Arun].my_each_with_index { |friend, index| puts friend if index.even? }
-
-puts '3.--------my_select--------'
-puts (%w[Sharon Leo Leila Brian Arun].my_select { |friend| friend != 'Brian' })
-
-puts '4.--------my_all--------'
-puts (%w[ant bear cat].my_all? { |word| word.length >= 3 }) #=> true
-puts (%w[ant bear cat].my_all? { |word| word.length >= 4 }) #=> false
-puts %w[ant bear cat].my_all?(/t/) #=> false
-puts [1, 2i, 3.14].my_all?(Numeric) #=> true
-puts [].my_all? #=> true
-
-puts '5.--------my_any--------'
-puts (%w[ant bear cat].my_any? { |word| word.length >= 3 }) #=> true
-puts (%w[ant bear cat].my_any? { |word| word.length >= 4 }) #=> true
-puts %w[ant bear cat].my_any?(/d/) #=> false
-puts [nil, true, 99].my_any?(Integer) #=> true
-puts [nil, true, 99].my_any? #=> true
-puts [].my_any? #=> false
-
-puts '6.--------my_none--------'
-puts (%w[ant bear cat].my_none? { |word| word.length == 5 }) #=> true
-puts (%w[ant bear cat].my_none? { |word| word.length >= 4 }) #=> false
-puts %w[ant bear cat].my_none?(/d/) #=> true
-puts [1, 3.14, 42].my_none?(Float) #=> false
-puts [].my_none? #=> true
-puts [nil].my_none? #=> true
-puts [nil, false].my_none? #=> true
-puts [nil, false, true].my_none? #=> false
-
-puts '7.--------my_count--------'
-arr = [1, 2, 4, 2]
-puts arr.my_count #=> 4
-puts arr.my_count(2) #=> 2
-puts (arr.my_count { |x| (x % 2).zero? }) #=> 3
-
-puts '8.--------my_maps--------'
-my_order = ['medium Big Mac', 'medium fries', 'medium milkshake']
-puts (my_order.my_map { |item| item.gsub('medium', 'extra large') })
-puts ((0..5).my_map { |i| i * i })
-puts 'my_map_proc'
-my_proc = Proc.new { |i| i * i }
-puts (1..5).my_map(&my_proc)
-
-puts '8.--------my_inject--------'
-puts ((1..5).my_inject { |sum, n| sum + n }) #=> 15
-puts (1..5).my_inject(1) { |product, n| product * n } #=> 120
-longest = %w[ant bear cat].my_inject do |memo, word|
-  memo.length > word.length ? memo : word
-end
-puts longest #=> "bear"
-
-puts 'multiply_els'
-puts multiply_els([2, 4, 5]) #=> 40
-

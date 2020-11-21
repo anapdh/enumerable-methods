@@ -13,9 +13,11 @@ module Enumerable
         return to_enum(:my_each_with_index) unless block_given?
         is_range = !self.kind_of?(Array) 
         range = is_range ? self : 0...self.length
+        index = 0
         for i in range do
             ind = (is_range ? i : self[i])
-            yield(ind, i)
+            yield(ind, index)
+            index += 1
         end
         self
     end

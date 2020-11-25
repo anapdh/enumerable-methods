@@ -17,7 +17,6 @@ GEM
     rspec-support (3.10.0)
 
 PLATFORMS
-  x64-mingw32
   x86_64-linux
 
 DEPENDENCIES

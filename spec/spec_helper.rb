@@ -73,35 +73,91 @@ require_relative '../enumerables.rb'
       expect(result.kind_of?(Range)).to eql(true)
     end
   end
-# puts '2.--------my_each_with_index--------'
-# %w[Sharon Leo Leila Brian Arun].my_each_with_index { |friend, index| puts friend if index.even? }
 
-# puts '3.--------my_select--------'
-# puts (%w[Sharon Leo Leila Brian Arun].my_select { |friend| friend != 'Brian' })
+  describe "my_select" do
+    it "Successfully select elements of self" do 
+      result = arr.my_select {|n| n.even? }
+      expect(result).to eql([2])
+    end
+    it "Returns an Array when self is an Array" do 
+      result = arr.my_select {|n| n }
+      expect(result.kind_of?(Array)).to eql(true)
+    end
+    it "Returns an Array when self is an Hash" do 
+      result = hash.my_select {|n| n }
+      expect(result.kind_of?(Array)).to eql(true)
+    end
+    it "Returns an Array when self is an Range" do 
+      result = range.my_select {|n| n }
+      expect(result.kind_of?(Array)).to eql(true)
+    end
+  end
 
-# puts '4.--------my_all--------'
-# puts (%w[ant bear cat].my_all? { |word| word.length >= 3 }) #=> true
-# puts (%w[ant bear cat].my_all? { |word| word.length >= 4 }) #=> false
-# puts %w[ant bear cat].my_all?(/t/) #=> false
-# puts [1, 2i, 3.14].my_all?(Numeric) #=> true
-# puts [].my_all? #=> true
+  describe "#my_all?" do
+    it "Works when all the cases are true" do
+      expect(%w[ant bear cat].my_all? { |word| word.length >= 3 }).to eql(true)
+    end
+    it "Works when just 1 element is true" do
+      expect(%w[ant bear cat].my_all? { |word| word.length >= 4 }).to eql(false)
+    end
+    it "Works when a Regex argument is given" do
+      expect(%w[ant bear cat].my_all?(/t/)).to eql(false)
+    end
+    it "Works when a type argument is given" do
+      expect([1, 2i, 3.14].my_all?(Numeric)).to eql(true)
+    end
+    it "Works when no argument nor block is given" do
+      expect([].my_all?).to eql(true)
+    end
+  end
 
-# puts '5.--------my_any--------'
-# puts (%w[ant bear cat].my_any? { |word| word.length >= 3 }) #=> true
-# puts (%w[ant bear cat].my_any? { |word| word.length >= 4 }) #=> true
-# puts %w[ant bear cat].my_any?(/d/) #=> false
-# puts [nil, true, 99].my_any?(Integer) #=> true
-# puts [nil, true, 99].my_any? #=> true
-# puts [].my_any? #=> false
+  describe "#my_any?" do
+    it "Works when all the cases are true" do
+      expect(%w[ant bear cat].my_any? { |word| word.length >= 3 }).to eql true
+    end
+    it "Works when one the cases are true" do
+      expect(%w[ant bear cat].my_any? { |word| word.length >= 4 }).to eql true
+    end
+    it "Works when a Regex argument is given" do
+      expect(%w[ant bear cat].my_any?(/d/)).to eql false
+    end
+    it "Works when a type argument is given" do
+      expect([nil, true, 99].my_any?(Integer)).to eql true
+    end
+    it "Works when no argument nor block is given" do 
+      expect([nil, true, 99].my_any? eql true).to eql false
+    end
+    it "Works when self is empty" do
+      expect([].my_any?).to eql true
+    end
+  end
 
-# puts '6.--------my_none--------'
-# puts (%w[ant bear cat].my_none? { |word| word.length == 5 }) #=> true
-# puts (%w[ant bear cat].my_none? { |word| word.length >= 4 }) #=> false
-# puts %w[ant bear cat].my_none?(/d/) #=> true
-# puts [1, 3.14, 42].my_none?(Float) #=> false
-# puts [].my_none? #=> true
-# puts [nil].my_none? #=> true
-# puts [nil, false].my_none? #=> true
+  describe "#my_none" do
+    it "Works when all the cases are false" do
+      expect(%w[ant bear cat].my_none? { |word| word.length == 5 }).to eql true
+    end
+    it "Works when one the cases are true" do
+      expect(%w[ant bear cat].my_none? { |word| word.length >= 4 }).to eql false  
+    end
+    it "Works when a Regex is given as an argument" do
+      expect(%w[ant bear cat].my_none?(/d/)).to eql true
+    end
+    it "Works when a type is given as an argument" do
+      expect([1, 3.14, 42].my_none?(Float)).to eql false
+    end
+    it "Works when no argument nor block is given and self is empty" do
+      expect([].my_none?).to eql true
+    end
+    it "Works when no argument nor block is given and elements are nil" do
+      expect([nil].my_none?).to eql true
+    end
+    it "Works when no argument nor block is given and elements are nil or false" do
+      expect([nil, false].my_none?).to eql true
+    end
+    
+  
+  end
+
 # puts [nil, false, true].my_none? #=> false
 
 # puts '7.--------my_count--------'

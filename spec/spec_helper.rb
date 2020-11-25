@@ -9,9 +9,11 @@ RSpec.configure do |config|
 end
 
 require_relative '../enumerables.rb'
-  arr = [1, 2, 3, 5, 5]
-  hash = {a: 1, b: 2, c: 3, d: 4}
-  range = 0..9
+describe "Enumerablea" do
+  let!(:arr)  { [1, 2, 3, 5, 5] }
+  let!(:hash)  { {a: 1, b: 2, c: 3, d: 4} }
+  let!(:range) { 0..9 }  
+  
   describe "#my_each" do
     it "Goes through all elements in an Array" do
       i = 0
@@ -206,4 +208,5 @@ require_relative '../enumerables.rb'
       expect((1..5).my_inject(1, :*)).to eql 120
     end
   end
+end
 

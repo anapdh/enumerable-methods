@@ -154,34 +154,56 @@ require_relative '../enumerables.rb'
     it "Works when no argument nor block is given and elements are nil or false" do
       expect([nil, false].my_none?).to eql true
     end
-    
+    it "Works when no argument nor block is given and one of the elements is true" do
+      expect([nil, false, true].my_none?).to eql(false)
+    end
   
   end
 
-# puts [nil, false, true].my_none? #=> false
+  describe "#my_count" do
+    it "Successfully count the elements of an Array" do 
+      expect(arr.my_count).to eql(5)
+    end
+    it "Successfully count the elements of an Array when an argument is given" do 
+      expect(arr.my_count(2)).to eql 1
+    end
+    it "Successfully count the elements of an Array when a block is given" do 
+      expect(arr.my_count { |x| x.odd? }).to eql 4
+    end
+  
+  end
 
-# puts '7.--------my_count--------'
-# arr = [1, 2, 4, 2]
-# puts arr.my_count #=> 4
-# puts arr.my_count(2) #=> 2
-# puts (arr.my_count { |x| (x % 2).zero? }) #=> 3
+  describe "#my_map" do
+    it "Returns an Array with the new elements when self is an an Array" do 
+      result = (arr.my_map { |i| i * 2 })
+      expect(result.kind_of?(Array)).to eql true
+      expect(result).to eql([2, 4, 6, 10, 10])
+    end
+    
+    it "Returns an Array with the new elements when self is an a Range" do 
+      result = ((0..5).my_map { |i| i * 2 })
+      expect(result.kind_of?(Array)).to eql true
+      expect(result).to eql([0, 2, 4, 6, 8, 10])
+    end
 
-# puts '8.--------my_maps--------'
-# my_order = ['medium Big Mac', 'medium fries', 'medium milkshake']
-# puts (my_order.my_map { |item| item.gsub('medium', 'extra large') })
-# puts ((0..5).my_map { |i| i * i })
-# puts 'my_map_proc'
-# my_proc = proc { |i| i * i }
-# puts (1..5).my_map(&my_proc)
-
-# puts '8.--------my_inject--------'
-# puts ((1..5).my_inject { |sum, n| sum + n }) #=> 15
-# puts (1..5).my_inject(1) { |product, n| product * n } #=> 120
-# longest = %w[ant bear cat].my_inject do |memo, word|
-#   memo.length > word.length ? memo : word
-# end
-# puts longest #=> "bear"
-
-# puts 'multiply_els'
-# puts multiply_els([2, 4, 5]) #=> 40
+    it "Takes the Proc when a Proc and a Block are given" do 
+      my_proc = proc { |i| i * i }
+      result = ((0..5).my_map(my_proc) { |i| i * 2 })
+      expect(result.kind_of?(Array)).to eql true
+      expect(result).to eql([0, 1, 4, 9, 16, 25])
+    end
+    
+  end 
+  
+  describe "#my_inject" do
+    it "Works when a block is given" do
+      expect((1..5).my_inject { |sum, n| sum + n }).to eql 15
+    end
+    it "Works when a block and an Argument are given" do
+      expect((1..5).my_inject(1) { |product, n| product * n }).to eql 120
+    end
+    it "Works when a a symbol is given and no block is given" do
+      expect((1..5).my_inject(1, :*)).to eql 120
+    end
+  end
 

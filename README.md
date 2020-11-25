@@ -36,6 +36,22 @@ Clone the repository in your local machine and execute the file folder on the te
 ### Running the file
 Execute the file using ruby enumerables.rb on the terminal.
 
+### Testing methods
+
+For testing please escute the next steps:
+
+- Execute the following code on the terminal to get the Gems needed:
+
+```
+bundle install
+```
+
+- Run the test with the following command:
+
+```
+rspec
+```
+
 
 ## Author
 

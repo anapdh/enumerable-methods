@@ -1,0 +1,5 @@
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  rspec

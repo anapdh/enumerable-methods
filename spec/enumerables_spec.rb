@@ -1,9 +1,7 @@
-# frozen_string_literal: true
-
 require_relative '../enumerables'
 describe 'Enumerables' do
   let!(:arr) { [1, 2, 3, 5, 5] }
-  let!(:hash)  { { a: 1, b: 2, c: 3, d: 4 } }
+  let!(:hash) { { a: 1, b: 2, c: 3, d: 4 } }
   let!(:range) { 0..9 }
 
   describe '#my_each' do
@@ -168,7 +166,7 @@ describe 'Enumerables' do
       expect(arr.my_count(&:odd?)).to eql 4
     end
     it 'Does not return a float' do
-      expect(arr.my_count(&:odd?).kind_of?(Float)).to_not eql true
+      expect(arr.my_count(&:odd?).is_a?(Float)).to_not eql true
     end
   end
 
@@ -194,7 +192,7 @@ describe 'Enumerables' do
     end
 
     it 'Takes the Proc when a Proc and a Block are given' do
-      my_proc = proc { |i| i * i }
+      my_proc = proc { |i| i.pow(2) }
       result = ((0..5).my_map(my_proc) { |i| i * 2 })
       expect(result).to eql([0, 1, 4, 9, 16, 25])
     end
@@ -225,8 +223,8 @@ describe 'Enumerables' do
     it 'Does not work with Hash' do
       expect { multiply_els({ a: 2, b: 4, c: 10 }) }.to raise_error(TypeError)
     end
-    it "Does not return a Integer or Float with an empty argument" do
-      expect(multiply_els([]).kind_of?(Integer) || multiply_els([]).kind_of?(Float)).to_not eql(true)
+    it 'Does not return a Integer or Float with an empty argument' do
+      expect(multiply_els([]).is_a?(Integer) || multiply_els([]).is_a?(Float)).to_not eql(true)
     end
   end
 end

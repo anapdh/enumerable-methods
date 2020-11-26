@@ -1,11 +1,6 @@
-# frozen_string_literal: true
-
-# rubocop:disable Metrics/AbcSize
 # rubocop:disable Metrics/CyclomaticComplexity
 # rubocop:disable Metrics/PerceivedComplexity
-# rubocop:disable Metrics/MethodLength
 # rubocop:disable Metrics/ModuleLength
-# rubocop:disable Style/Documentation
 
 module Enumerable
   def my_each
@@ -144,9 +139,6 @@ def multiply_els(arg)
   end
 end
 
-# rubocop:enable Style/Documentation
-# rubocop:enable Metrics/MethodLength
 # rubocop:enable Metrics/ModuleLength
-# rubocop:enable Metrics/AbcSize
 # rubocop:enable Metrics/CyclomaticComplexity
 # rubocop:enable Metrics/PerceivedComplexity

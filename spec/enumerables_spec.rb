@@ -26,15 +26,15 @@ describe 'Enumerables' do
     end
     it 'Returns an Array when self is an Array and a block is given' do
       result = arr.my_each { |n| n }
-      expect(result.is_a?(Array)).to eql(true)
+      expect(result.is_a?(Array)).to_not eql(false)
     end
     it 'Returns an Hash when self is an Hash and a block is given' do
       result = hash.my_each { |n| n }
-      expect(result.is_a?(Hash)).to eql(true)
+      expect(result.is_a?(Hash)).to_not eql(false)
     end
     it 'Returns an Range when self is an Range and a block is given' do
       result = range.my_each { |n| n }
-      expect(result.is_a?(Range)).to eql(true)
+      expect(result.is_a?(Range)).to_not eql(false)
     end
   end
 
@@ -60,15 +60,15 @@ describe 'Enumerables' do
     end
     it 'Returns an Array when self is an Array and a block is given' do
       result = arr.my_each_with_index { |n, _j| n }
-      expect(result.is_a?(Array)).to eql(true)
+      expect(result.is_a?(Array)).to_not eql(false)
     end
     it 'Returns an Hash when self is an Hash and a block is given' do
       result = hash.my_each_with_index { |n, _j| n }
-      expect(result.is_a?(Hash)).to eql(true)
+      expect(result.is_a?(Hash)).to_not eql(false)
     end
     it 'Returns an Range when self is an Range and a block is given' do
       result = range.my_each_with_index { |n, _j| n }
-      expect(result.is_a?(Range)).to eql(true)
+      expect(result.is_a?(Range)).to_not eql(false)
     end
   end
 
@@ -83,11 +83,11 @@ describe 'Enumerables' do
     end
     it 'Returns an Array when self is an Hash' do
       result = hash.my_select { |n| n }
-      expect(result.is_a?(Array)).to eql(true)
+      expect(result.is_a?(Array)).to_not eql(false)
     end
     it 'Returns an Array when self is an Range' do
       result = range.my_select { |n| n }
-      expect(result.is_a?(Array)).to eql(true)
+      expect(result.is_a?(Array)).to_not eql(false)
     end
   end
 
@@ -102,10 +102,10 @@ describe 'Enumerables' do
       expect(%w[ant bear cat].my_all?(/t/)).to eql(false)
     end
     it 'Works when a type argument is given' do
-      expect([1, 2i, 3.14].my_all?(Numeric)).to eql(true)
+      expect([1, 2i, 3.14].my_all?(Numeric)).to_not eql(false)
     end
-    it 'Works when no argument nor block is given' do
-      expect([].my_all?).to eql(true)
+    it 'Does not return false when no argument nor block is given and self is empty' do
+      expect([].my_all?).to_not eql false
     end
   end
 
@@ -122,11 +122,11 @@ describe 'Enumerables' do
     it 'Works when a type argument is given' do
       expect([nil, true, 99].my_any?(Integer)).to eql true
     end
-    it 'Works when no argument nor block is given' do
-      expect([nil, true, 99].my_any?(eql true)).to eql false
+    it 'Does not return true when no argument nor block is given' do
+      expect([nil, true, 99].my_any?(eql true)).to_not eql true
     end
-    it 'Works when self is empty' do
-      expect([].my_any?).to eql true
+    it 'Does not return false when self is empty' do
+      expect([].my_any?).to_not eql false
     end
   end
 
@@ -149,11 +149,11 @@ describe 'Enumerables' do
     it 'Works when no argument nor block is given and elements are nil' do
       expect([nil].my_none?).to eql true
     end
-    it 'Works when no argument nor block is given and elements are nil or false' do
-      expect([nil, false].my_none?).to eql true
+    it 'Does not retur false nor block is given and elements are nil or false' do
+      expect([nil, false].my_none?).to_not eql false
     end
-    it 'Works when no argument nor block is given and one of the elements is true' do
-      expect([nil, false, true].my_none?).to eql(false)
+    it 'Does not return true nor block is given and one of the elements is true' do
+      expect([nil, false, true].my_none?).to_not eql true
     end
   end
 
@@ -166,6 +166,9 @@ describe 'Enumerables' do
     end
     it 'Successfully count the elements of an Array when a block is given' do
       expect(arr.my_count(&:odd?)).to eql 4
+    end
+    it 'Does not return a float' do
+      expect(arr.my_count(&:odd?).kind_of?(Float)).to_not eql true
     end
   end
 
@@ -180,9 +183,9 @@ describe 'Enumerables' do
       expect(result).to eql([2, 4, 6, 10, 10])
     end
 
-    it 'Returns an Array with the new elements when self is a Range' do
+    it 'Does not returns an Range when self is a Range' do
       result = ((0..5).my_map { |i| i * 2 })
-      expect(result.is_a?(Array)).to eql true
+      expect(result.is_a?(Range)).to_not eql true
     end
 
     it 'Returns a valid result when self is a Range' do
@@ -207,6 +210,9 @@ describe 'Enumerables' do
     it 'Works when a a symbol is given and no block is given' do
       expect((1..5).my_inject(1, :*)).to eql 120
     end
+    it 'Does no raise a TypeError error if no block or symbol are given' do
+      expect { (1..5).my_inject }.to_not raise_error(TypeError)
+    end
     it 'Raise a localJump error if no block or symbol are given' do
       expect { (1..5).my_inject }.to raise_error(LocalJumpError)
     end
@@ -218,6 +224,9 @@ describe 'Enumerables' do
     end
     it 'Does not work with Hash' do
       expect { multiply_els({ a: 2, b: 4, c: 10 }) }.to raise_error(TypeError)
+    end
+    it "Does not return a Integer or Float with an empty argument" do
+      expect(multiply_els([]).kind_of?(Integer) || multiply_els([]).kind_of?(Float)).to_not eql(true)
     end
   end
 end

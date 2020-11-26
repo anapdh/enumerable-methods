@@ -1,164 +1,152 @@
+# frozen_string_literal: true
+
+# rubocop:disable Metrics/AbcSize
+# rubocop:disable Metrics/CyclomaticComplexity
+# rubocop:disable Metrics/PerceivedComplexity
+# rubocop:disable Metrics/MethodLength
+# rubocop:disable Metrics/ModuleLength
+# rubocop:disable Style/Documentation
+
 module Enumerable
-    def my_each
-        return to_enum(:my_each) unless block_given?
-        is_range = !self.kind_of?(Array) 
-        range = is_range ? self : 0...self.length
-        for i in range do
-            yield(is_range ? i : self[i])
-        end
-        self
-    end
-    
-    def my_each_with_index
-        return to_enum(:my_each_with_index) unless block_given?
-        is_range = !self.kind_of?(Array) 
-        range = is_range ? self : 0...self.length
-        index = 0
-        for i in range do
-            ind = (is_range ? i : self[i])
-            yield(ind, index)
-            index += 1
-        end
-        self
-    end
+  def my_each
+    return to_enum(:my_each) unless block_given?
 
-    def my_select
-        return to_enum(:my_select) unless block_given?
-        a = []
-        my_each do |n|
-            if yield(n)
-                a.push(n)
-            end
-        end
-        a
+    is_range = !is_a?(Array)
+    range = is_range ? self : 0...length
+    range.each do |i|
+      yield(is_range ? i : self[i])
     end
+    self
+  end
 
-    def my_all?(pattern = nil)
-        my_each do |n|
-            if pattern != nil
-                if pattern.kind_of?(Class) && !n.kind_of?(pattern)
-                    return false
-                end
-                if !pattern.kind_of?(Class) && !n.to_s.match(pattern.to_s)
-                    return false
-                end
-            end
-            if block_given? && !yield(n)
-                return false
-            end
-        end
-        if !block_given? && pattern == nil
-            return my_all? {|n| n }
-        end
-        true
+  def my_each_with_index
+    return to_enum(:my_each_with_index) unless block_given?
+
+    is_range = !is_a?(Array)
+    range = is_range ? self : 0...length
+    index = 0
+    range.each do |i|
+      ind = (is_range ? i : self[i])
+      yield(ind, index)
+      index += 1
     end
+    self
+  end
 
-    def my_any?(pattern = nil)
-        my_each do |n|
-            if pattern != nil
-                if pattern.kind_of?(Class) && n.kind_of?(pattern)
-                    return true
-                end
-                if !pattern.kind_of?(Class) && n.to_s.match(pattern.to_s)
-                    return true
-                end
-            end
-            if block_given? && yield(n)
-                return true
-            end
-        end
-        if (!block_given? && pattern == nil && self.empty?)
-            return true
-        end
-        if !block_given? && pattern == nil
-            return my_any? {|n| n}
-        end
-        false
+  def my_select
+    return to_enum(:my_select) unless block_given?
+
+    a = []
+    my_each do |n|
+      a.push(n) if yield(n)
     end
+    a
+  end
 
-    def my_none?(pattern = nil)
-        my_each do |n|
-            if pattern != nil
-                if pattern.kind_of?(Class) && n.kind_of?(pattern)
-                    return false
-                end
-                if !pattern.kind_of?(Class) && n.to_s.match(pattern.to_s)
-                    return false
-                end
-            end
-            if block_given? && yield(n)
-                return false
-            end
-        end
-        if !block_given? && pattern == nil
-            return my_none? {|n| n }
-        end
-        true
+  def my_all?(pattern = nil)
+    my_each do |n|
+      unless pattern.nil?
+        return false if pattern.is_a?(Class) && !n.is_a?(pattern)
+        return false if !pattern.is_a?(Class) && !n.to_s.match(pattern.to_s)
+      end
+      return false if block_given? && !yield(n)
     end
+    return my_all? { |n| n } if !block_given? && pattern.nil?
 
-    def my_count(arg = nil)
-            count = 0
-            if arg == nil && block_given? == false
-                my_each do |n|
-                    count += 1
-                    end
-            return count
-            elsif block_given?
-                my_each do |n|
-                    if yield(n)
-                    count += 1
-                    end
-                end
-                return count
-            else
-            my_each do |n|
-                if arg == n
-                count += 1
-                end
-            end
-            return count
-        end  
+    true
+  end
+
+  def my_any?(pattern = nil)
+    my_each do |n|
+      unless pattern.nil?
+        return true if pattern.is_a?(Class) && n.is_a?(pattern)
+        return true if !pattern.is_a?(Class) && n.to_s.match(pattern.to_s)
+      end
+      return true if block_given? && yield(n)
     end
+    return true if !block_given? && pattern.nil? && empty?
+    return my_any? { |n| n } if !block_given? && pattern.nil?
 
-    def my_map(block = nil)
-        return to_enum(:my_map) unless block_given? || block != nil
-        newarr = []
-        my_each do | n |
-            if block != nil
-                newarr << block.call(n)
-            else
-                newarr << yield(n)
-            end
-        end
-        return newarr
+    false
+  end
+
+  def my_none?(pattern = nil)
+    my_each do |n|
+      unless pattern.nil?
+        return false if pattern.is_a?(Class) && n.is_a?(pattern)
+        return false if !pattern.is_a?(Class) && n.to_s.match(pattern.to_s)
+      end
+      return false if block_given? && yield(n)
     end
+    return my_none? { |n| n } if !block_given? && pattern.nil?
 
-    def my_inject(acc = nil, operator = nil)
-        if acc.is_a?(Symbol)
-            operator = acc
-            acc = nil
-        end
-        is_symbol = operator.is_a?(Symbol)
-        raise LocalJumpError if !block_given? && !is_symbol
-        is_range = self.kind_of?(Range)
-        my_each_with_index do | n, i |
-            if (is_range ? true : i == 0) && acc == nil
-                acc = n
-            else
-                if operator != nil && is_symbol
-                    operator = operator.to_proc
-                    acc = operator.call(acc, n)
+    true
+  end
+
+  def my_count(arg = nil)
+    count = 0
+    if arg.nil? && block_given? == false
+      my_each do |_n|
+        count += 1
+      end
+    elsif block_given?
+      my_each do |n|
+        count += 1 if yield(n)
+      end
+    else
+      my_each do |n|
+        count += 1 if arg == n
+      end
+    end
+    count
+  end
+
+  def my_map(block = nil)
+    return to_enum(:my_map) unless block_given? || !block.nil?
+
+    newarr = []
+    my_each do |n|
+      newarr << if !block.nil?
+                  block.call(n)
                 else
-                    acc = yield(acc, n)
+                  yield(n)
                 end
-            end
-        end
-        return acc
     end
+    newarr
+  end
+
+  def my_inject(acc = nil, operator = nil)
+    if acc.is_a?(Symbol)
+      operator = acc
+      acc = nil
+    end
+    is_symbol = operator.is_a?(Symbol)
+    raise LocalJumpError if !block_given? && !is_symbol
+
+    is_range = is_a?(Range)
+    my_each_with_index do |n, i|
+      if (is_range ? true : i.zero?) && acc.nil?
+        acc = n
+      elsif !operator.nil? && is_symbol
+        operator = operator.to_proc
+        acc = operator.call(acc, n)
+      else
+        acc = yield(acc, n)
+      end
+    end
+    acc
+  end
 end
 
 def multiply_els(arg)
-        arg.my_inject do | acc, n |
-            acc * n
-        end
+  arg.my_inject do |acc, n|
+    acc * n
+  end
 end
+
+# rubocop:enable Style/Documentation
+# rubocop:enable Metrics/MethodLength
+# rubocop:enable Metrics/ModuleLength
+# rubocop:enable Metrics/AbcSize
+# rubocop:enable Metrics/CyclomaticComplexity
+# rubocop:enable Metrics/PerceivedComplexity

@@ -1,0 +1,5 @@
+Metrics/BlockLength:
+  Enabled: false
+
+Lint/BinaryOperatorWithIdenticalOperands:
+  Enabled: false

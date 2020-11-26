@@ -38,6 +38,8 @@ Execute the file using ruby enumerables.rb on the terminal.
 
 ### Testing methods
 
+![Screenshot of testing](capture.png)
+
 For testing please escute the next steps:
 
 - Execute the following code on the terminal to get the Gems needed:
